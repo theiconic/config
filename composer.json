@@ -1,0 +1,14 @@
+{
+    "name": "theiconic/config",
+    "description": "more or less generic config module",
+    "authors": [
+        {
+            "name": "TheIconic Engineering",
+            "email": "engineering@theiconic.com.au"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "mikey179/vfsStream": "^1.6"
+    }
+}

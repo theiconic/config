@@ -7,6 +7,11 @@
             "email": "engineering@theiconic.com.au"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "TheIconic\\Config\\": "src/"
+        }
+    },
     "require": {},
     "require-dev": {
         "mikey179/vfsStream": "^1.6"

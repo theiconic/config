@@ -56,6 +56,11 @@ class Space
     protected $usesEnvironment = true;
 
     /**
+     * @var array placeholders
+     */
+    protected $placeholders = [];
+
+    /**
      * Set constructor.
      * @param string $name
      * @param string|null $environment
@@ -119,17 +124,6 @@ class Space
     }
 
     /**
-     * we split this out to be able to easily change
-     * the filesystem implementation (e.g. in tests)
-     *
-     * @return string the class name of the filesystem helper
-     */
-    protected function getFilesystemHelperName()
-    {
-        return 'Shared\Helper\Filesystem';
-    }
-
-    /**
      * parses the configs
      *
      * @return array the parsed and flattened config array
@@ -141,24 +135,34 @@ class Space
         $config = [];
         foreach ($this->getReadableSources() as $path) {
             try {
-                $config = $this->merge($config, $parser->parse($path));
+                $config = $this->merge($config, $this->replacePlaceholders($parser->parse($path)));
             } catch (ParserException $e) {
                 // ignore parse errors
             }
         }
 
-        if (!empty($config['meta']['environment'])) {
-            $this->setEnvironment($config['meta']['environment']);
-        }
-
-        if (!empty($config['meta']['use_environment'])) {
-            $this->usesEnvironment = (bool) $config['meta']['use_environment'];
-        }
-
-        unset($config['meta']);
-
         if ($this->usesEnvironment) {
             return $this->flattenByEnvironment($config, $this->getEnvironment());
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param array $config
+     */
+    protected function replacePlaceholders(array $config)
+    {
+        if (empty($this->placeholders)) {
+            return $config;
+        }
+
+        foreach ($config as $key => $value) {
+            if (is_array($value)) {
+                $config[$key] = $this->replacePlaceholders($value);
+            } else if (is_string($value)) {
+                $config[$key] = strtr($value, $this->placeholders);
+            }
         }
 
         return $config;
@@ -433,6 +437,34 @@ class Space
         $this->usesEnvironment = $flag;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPlaceholders()
+    {
+        return $this->placeholders;
+    }
+
+    /**
+     * @param array $placeholders
+     * @return $this
+     */
+    public function setPlaceholders(array $placeholders)
+    {
+        $this->placeholders = $placeholders;
+
+        return $this;
+    }
+
+    /**
+     * @param $placeholder
+     * @param $value
+     */
+    public function addPlaceholder($placeholder, $value)
+    {
+        $this->placeholders[$placeholder] = $value;
     }
 
 }

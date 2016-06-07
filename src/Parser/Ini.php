@@ -20,24 +20,13 @@ class Ini extends AbstractParser
      */
     public function parse($file)
     {
-        $config = parse_ini_string($this->replaceConstants(file_get_contents($file)), true);
+        $config = parse_ini_string(file_get_contents($file), true);
 
         if (false === $config) {
             throw new ParserException(sprintf('Couldn\'t parse config file %s', $file));
         }
 
         return $this->expand($config);
-    }
-
-    /**
-     * @param $str
-     * @return mixed
-     */
-    protected function replaceConstants($str)
-    {
-        return strtr($str, [
-            '%APP_PATH%' => APP_PATH,
-        ]);
     }
 
     /**

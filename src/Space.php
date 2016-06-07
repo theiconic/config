@@ -147,6 +147,16 @@ class Space
             }
         }
 
+        if (!empty($config['meta']['environment'])) {
+            $this->setEnvironment($config['meta']['environment']);
+        }
+
+        if (!empty($config['meta']['use_environment'])) {
+            $this->usesEnvironment = (bool) $config['meta']['use_environment'];
+        }
+
+        unset($config['meta']);
+
         if ($this->usesEnvironment) {
             return $this->flattenByEnvironment($config, $this->getEnvironment());
         }

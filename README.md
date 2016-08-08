@@ -8,10 +8,15 @@ General purpose config manager for file-based configuration.
 Configuration is grouped into configuration spaces.
 Spaces are managed by the configuration factory.
 
-### Multi-file configuration
+### Multi-file & multi-environment configuration
 A configuration space can read configuration from several
 files. The configuration is merged and then flattened by
 environment - unless the space is flagged as non-environmental.
+
+Multi-environment configuration can be disabled per space:
+```
+$configSpace->useEnvironment(false);
+```
 
 ### Placeholders
 During parsing, pre-defined placeholders will be replaced

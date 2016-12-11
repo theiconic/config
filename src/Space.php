@@ -103,6 +103,9 @@ class Space
         return $this->resolve($key, $default);
     }
 
+    /**
+     * @return array
+     */
     public function flatten()
     {
         return $this->doFlatten($this->get());
@@ -128,7 +131,7 @@ class Space
      *
      * @return array the parsed and flattened config array
      */
-    public function parse()
+    protected function parse()
     {
         $parser = $this->getParser();
 
@@ -141,7 +144,7 @@ class Space
             }
         }
 
-        if ($this->usesEnvironment) {
+        if ($this->hasEnvironment()) {
             return $this->flattenByEnvironment($config, $this->getEnvironment());
         }
 
@@ -187,9 +190,9 @@ class Space
      *
      * @return array
      */
-    public function getReadableSources()
+    protected function getReadableSources()
     {
-        $paths = array();
+        $paths = [];
 
         foreach ($this->getPaths() as $path) {
             if (is_readable($path)) {
@@ -306,16 +309,16 @@ class Space
      *
      * @return array an array of configuration file paths
      */
-    protected function getPaths()
+    public function getPaths(): array
     {
         return $this->paths;
     }
 
     /**
      * @param array $paths
-     * @return $this
+     * @return Space
      */
-    public function setPaths(array $paths)
+    public function setPaths(array $paths): Space
     {
         $this->paths = $paths;
 
@@ -324,9 +327,9 @@ class Space
 
     /**
      * @param string $path
-     * @return $this
+     * @return Space
      */
-    public function addPath($path)
+    public function addPath($path): Space
     {
         if (!in_array($path, $this->paths)) {
             $this->paths[] = $path;
@@ -398,7 +401,7 @@ class Space
      * 
      * @return array
      */
-    public function merge(array $base, array $subject)
+    protected function merge(array $base, array $subject)
     {
         $args = func_get_args();
         $base = array_shift($args);
@@ -423,20 +426,13 @@ class Space
     }
 
     /**
-     * set/get if we should merge by environment
+     * get if we should merge by environment
      *
-     * @param null $flag
-     * @return $this|bool
+     * @return bool
      */
-    public function useEnvironment($flag = null)
+    public function hasEnvironment()
     {
-        if (null === $flag) {
-            return $this->usesEnvironment;
-        }
-
-        $this->usesEnvironment = $flag;
-
-        return $this;
+        return (bool) $this->environment;
     }
 
     /**

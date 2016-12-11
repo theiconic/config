@@ -74,6 +74,7 @@ any of the source configuration files changes.
 Extendable parsers are used to parse different file formats.
 Currently implemented parsers are:
 * Ini (for .ini files)
+* Json (for .json files)
 * Php (for .php files)
 * Autodetect (automatically picks the right parser based on extension)
 * Dummy (for unit tests etc.)

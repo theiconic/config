@@ -9,11 +9,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "TheIconic\\Config\\": "src/"
+            "TheIconic\\Config\\": ["src/", "test/"]
         }
     },
     "require": {},
     "require-dev": {
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/phpunit": "^5.7"
     }
 }

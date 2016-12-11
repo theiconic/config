@@ -3,6 +3,7 @@
 namespace TheIconic\Config\Parser;
 
 use TheIconic\Config\Exception\ParserException;
+use Exception;
 
 /**
  * auto-detecting parser - invokes specific parser based on config file extension
@@ -11,6 +12,10 @@ use TheIconic\Config\Exception\ParserException;
  */
 class Autodetect extends AbstractParser
 {
+    /**
+     * @var array
+     */
+    protected $parsers = [];
 
     /**
      * invokes specific parser based on config file extension
@@ -22,16 +27,43 @@ class Autodetect extends AbstractParser
     public function parse($file)
     {
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        $className = __NAMESPACE__ . '\\' . sprintf(ucfirst(strtolower($extension)));
 
-        if (!class_exists($className)) {
+        $parsers = $this->getParsers();
+
+        if (!isset($parsers[$extension])) {
             throw new ParserException(sprintf('No parser found for config file with extension \'%s\'', $extension));
         }
 
         /** @var AbstractParser $parser */
-        $parser = new $className();
+        $parser = $parsers[$extension];
 
         return $parser->parse($file);
     }
 
+    /**
+     * @return array
+     */
+    public function getParsers(): array
+    {
+        if (empty($this->parsers)) {
+            $this->parsers = [
+                'ini' => new Ini(),
+                'php' => new Php(),
+                'json' => new Json(),
+            ];
+        }
+
+        return $this->parsers;
+    }
+
+    /**
+     * @param array $parsers
+     * @return Autodetect
+     */
+    public function setParsers(array $parsers): Autodetect
+    {
+        $this->parsers = $parsers;
+
+        return $this;
+    }
 }

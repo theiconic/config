@@ -4,6 +4,11 @@ namespace TheIconic\Config;
 
 use TheIconic\Config\Exception\PreconditionException;
 
+/**
+ * Config Space Factory
+ *
+ * @package TheIconic\Config
+ */
 class Factory
 {
 

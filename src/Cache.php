@@ -19,7 +19,7 @@ class Cache
     protected $basePath;
 
     /**
-     * constructor takes the array of source paths
+     * constructor takes the base path for cache files
      *
      * @param string $basePath the base path
      */

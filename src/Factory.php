@@ -56,18 +56,15 @@ class Factory
     public function getSpace($name)
     {
         $name = strtolower($name);
-        $environment = strtolower($this->getEnvironment());
 
-        $key = $name . '::' . $environment;
-
-        if (!isset($this->spaces[$key])) {
-            $config = new Space($name, $environment);
+        if (!isset($this->spaces[$name])) {
+            $config = new Space($name);
             $config->setCache($this->getCache());
 
-            $this->spaces[$key] = $config;
+            $this->spaces[$name] = $config;
         }
 
-        return $this->spaces[$key];
+        return $this->spaces[$name];
     }
 
     /**
@@ -115,28 +112,4 @@ class Factory
 
         return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function getEnvironment()
-    {
-        if (null === $this->environment) {
-            throw new PreconditionException('Environment has not been set.');
-        }
-
-        return $this->environment;
-    }
-
-    /**
-     * @param $environment
-     * @return $this
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-
-        return $this;
-    }
-
 }

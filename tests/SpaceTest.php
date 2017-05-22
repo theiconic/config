@@ -33,8 +33,9 @@ class SpaceTest extends PHPUnit_Framework_TestCase
                 ],
             ]));
 
-        $space = new Space('test', 'dev');
+        $space = new Space('test');
         $space->setCache($cache);
+        $space->setSections('all', 'dev');
 
         $this->assertSame('abc', $space->get('test.key'));
     }
@@ -61,8 +62,9 @@ class SpaceTest extends PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $space = new Space('test', 'dev');
+        $space = new Space('test');
         $space->setCache($cache);
+        $space->setSections('all', 'dev');
         $space->setParser($parser);
         $space->addPath('/');
 
@@ -91,8 +93,9 @@ class SpaceTest extends PHPUnit_Framework_TestCase
                 'key2' => 'bcd',
             ]));
 
-        $space = new Space('test', 'dev');
+        $space = new Space('test');
         $space->setCache($cache);
+        $space->setSections('all', 'dev');
 
         $this->assertSame([
             'test.key1' => 'abc',
@@ -123,9 +126,10 @@ class SpaceTest extends PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $space = new Space('test', 'dev');
+        $space = new Space('test');
         $space->setCache($cache);
         $space->setParser($parser);
+        $space->setSections('all', 'dev');
         $space->addPath('/');
         $space->addPlaceholder('%value1%', 'abc');
         $space->addPlaceholder('%value2%', 'bcd');

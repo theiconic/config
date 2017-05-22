@@ -36,9 +36,9 @@ class Space
     protected $cachePath;
 
     /**
-     * @var string the environment
+     * @var array the sections to use
      */
-    protected $environment;
+    protected $sections = [];
 
     /**
      * @var AbstractParser $parser
@@ -51,27 +51,17 @@ class Space
     protected $name;
 
     /**
-     * @var boolean indicates if config should be flattened by environment
-     */
-    protected $usesEnvironment = true;
-
-    /**
      * @var array placeholders
      */
     protected $placeholders = [];
 
     /**
-     * Set constructor.
-     * @param string $name
-     * @param string|null $environment
+     * Space constructor.
+     * @param $name
      */
-    public function __construct($name, $environment = null)
+    public function __construct($name)
     {
         $this->name = $name;
-
-        if (null !== $environment) {
-            $this->setEnvironment($environment);
-        }
     }
 
     /**
@@ -144,15 +134,12 @@ class Space
             }
         }
 
-        if ($this->hasEnvironment()) {
-            return $this->flattenByEnvironment($config, $this->getEnvironment());
-        }
-
-        return $config;
+        return $this->flattenSections($config);
     }
 
     /**
      * @param array $config
+     * @return array
      */
     protected function replacePlaceholders(array $config)
     {
@@ -207,24 +194,27 @@ class Space
      * flattens the config array for the given environment
      *
      * @param array $config the raw config array
-     * @param string $environment the environment
      * @return array the flattened config array
      */
-    protected function flattenByEnvironment(array $config, $environment)
+    protected function flattenSections(array $config)
     {
-        if (empty($environment)) {
-            throw new PreconditionException('Environment is not set.');
+        $merged = [];
+
+        $sections = $this->getSections();
+
+        if (empty($sections)) {
+            throw new PreconditionException('No sections have been configured.');
         }
 
-        if (!isset($config['all'])) {
-            $config['all'] = [];
+        foreach ($this->getSections() as $section) {
+            if (!isset($config[$section])) {
+                continue;
+            }
+
+            return $this->merge($merged, $config[$section]);
         }
 
-        if (!isset($config[$environment])) {
-            $config[$environment] = [];
-        }
-
-        return $this->merge($config['all'], $config[$environment]);
+        return $merged;
     }
     
     /**
@@ -253,26 +243,21 @@ class Space
     /**
      * get the environment
      *
-     * @return null|string
+     * @return array
      */
-    public function getEnvironment()
+    public function getSections()
     {
-        if (!$this->environment) {
-            $this->environment = APPLICATION_ENV;
-        }
-
-        return $this->environment;
+        return $this->sections;
     }
 
     /**
      * set the environment
      *
-     * @param string|null $environment
      * @return $this
      */
-    public function setEnvironment($environment)
+    public function setSections()
     {
-        $this->environment = $environment;
+        $this->sections = func_get_args();
 
         return $this;
     }
@@ -345,7 +330,7 @@ class Space
      */
     protected function getCacheKey()
     {
-        return strtolower(sprintf('%s_%s', md5(implode('::', $this->getPaths())), $this->getEnvironment()));
+        return strtolower(md5(sprintf('%s_%s', implode('::', $this->getPaths()), implode('::', $this->getSections()))));
     }
 
     /**
@@ -423,16 +408,6 @@ class Space
         }
 
         return $base;
-    }
-
-    /**
-     * get if we should merge by environment
-     *
-     * @return bool
-     */
-    public function hasEnvironment()
-    {
-        return (bool) $this->environment;
     }
 
     /**

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="vendor/autoload.php"
+         colors="true"
+        >
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory suffix=".php">tests</directory>
+            </exclude>
+        </whitelist>
+        <blacklist>
+            <directory>./vendor</directory>
+        </blacklist>
+    </filter>
+    <testsuites>
+        <testsuite name="The Iconic Config Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

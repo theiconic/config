@@ -102,21 +102,6 @@ class Space
     }
 
     /**
-     * allows setting a value for a config key
-     *
-     * @param $key
-     * @param $value
-     */
-    public function set($key, $value)
-    {
-        if (null === $this->config) {
-            $this->config = $this->get();
-        }
-
-        $this->config[$key] = $value;
-    }
-
-    /**
      * parses the configs
      *
      * @return array the parsed and flattened config array

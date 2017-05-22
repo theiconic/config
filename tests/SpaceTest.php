@@ -3,6 +3,8 @@
 namespace TheIconic\Config;
 
 use PHPUnit_Framework_TestCase;
+use TheIconic\Config\Exception\PreconditionException;
+use TheIconic\Config\Parser\Autodetect;
 use TheIconic\Config\Parser\Dummy;
 
 /**
@@ -131,8 +133,15 @@ class SpaceTest extends PHPUnit_Framework_TestCase
         $space->setParser($parser);
         $space->setSections('all', 'dev');
         $space->addPath('/');
-        $space->addPlaceholder('%value1%', 'abc');
+        $space->setPlaceholders([
+            '%value1%' => 'abc',
+        ]);
         $space->addPlaceholder('%value2%', 'bcd');
+
+        $this->assertSame([
+            '%value1%' => 'abc',
+            '%value2%' => 'bcd',
+        ], $space->getPlaceholders());
 
         $this->assertSame('abc', $space->get('test.key1'));
         $this->assertSame('bcd', $space->get('key2'));
@@ -158,14 +167,19 @@ class SpaceTest extends PHPUnit_Framework_TestCase
                     'key1' => 'allValue1'
                 ],
                 'key2' => 'allValue2',
-
+                'test3' => [
+                    'abc'
+                ],
             ],
             'dev' => [
                 'test' => [
                     'key1' => 'devValue1',
                 ],
                 'test2' => [
-                    'key3' => 'devValue3',
+                    'key3' => 123,
+                ],
+                'test3' => [
+                    'abc'
                 ],
             ]
         ]);
@@ -178,6 +192,97 @@ class SpaceTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame('devValue1', $space->get('test.key1'));
         $this->assertSame('allValue2', $space->get('key2'));
-        $this->assertSame('devValue3', $space->get('test2.key3'));
+        $this->assertSame(123, $space->get('test2.key3'));
+        $this->assertSame([
+            'abc',
+            'abc',
+        ], $space->get('test3'));
+    }
+    
+    public function testMissingSectionsThrowsException()
+    {
+        $cache = $this->getMockBuilder(Cache::class)
+            ->setConstructorArgs(['/tmp'])
+            ->getMock();
+
+        $cache->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(false));
+
+        $parser = new Dummy();
+        $parser->setContent([
+            'abc' => 'abc',
+        ]);
+        
+        $this->setExpectedException(PreconditionException::class);
+        
+        $space = new Space('test');
+        $space->setCache($cache);
+        $space->setParser($parser);
+        $space->get('abc');
+    }
+
+    public function testGetParserReturnsAutodetectParser()
+    {
+        $space = new Space('test');
+        $this->assertInstanceOf(Autodetect::class, $space->getParser());
+    }
+
+    public function testGetReturnsDefault()
+    {
+        $cache = $this->getMockBuilder(Cache::class)
+            ->setConstructorArgs(['/tmp'])
+            ->getMock();
+
+        $cache->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(false));
+
+        $parser = new Dummy();
+        $parser->setContent([]);
+
+        $space = new Space('test');
+        $space->setCache($cache);
+        $space->setParser($parser);
+        $space->setSections('all');
+        $this->assertSame('abcd', $space->get('non_existing_key', 'abcd'));
+    }
+
+    public function testPathHandling()
+    {
+        $cache = $this->getMockBuilder(Cache::class)
+            ->setConstructorArgs(['/tmp'])
+            ->getMock();
+
+        $cache->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(false));
+
+        $parser = $this->getMockBuilder(Dummy::class)
+            ->setMethods(['parse'])
+            ->getMock();
+        
+        $parser->expects($this->exactly(3))
+            ->method('parse')
+            ->withConsecutive(['/tmp/config/a.ini'], ['/tmp/config/b.ini'], ['/tmp/config/c.ini'])
+            ->willReturn([]);
+        
+        $space = $this->getMockBuilder(Space::class)
+            ->setConstructorArgs(['test'])
+            ->setMethods(['getReadableSources', 'getTimestamp'])
+            ->getMock();
+
+        $space->expects($this->once())
+            ->method('getReadableSources')
+            ->willReturnCallback(function () use ($space) {
+                return $space->getPaths();
+            });
+
+        $space->setPaths(['/tmp/config/a.ini', '/tmp/config/b.ini', '/tmp/config/c.ini']);
+        $space->setParser($parser);
+        $space->setSections('all');
+        $space->setCache($cache);
+        
+        $space->get('abc');
     }
 }

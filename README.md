@@ -3,8 +3,8 @@
 General purpose config manager for file-based configuration.
 
 ## Setup
-```$xslt
-composer require theiconic/name-parser
+```$php
+composer require theiconic/config
 ```
 
 ## Concepts

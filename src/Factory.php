@@ -23,11 +23,6 @@ class Factory
     protected $spaces = [];
 
     /**
-     * @var string the environment
-     */
-    protected $environment;
-
-    /**
      * @var string the cache base path
      */
     protected $cachePath;

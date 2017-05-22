@@ -207,11 +207,13 @@ class Space
         }
 
         foreach ($this->getSections() as $section) {
+            $section = strtolower($section);
+
             if (!isset($config[$section])) {
                 continue;
             }
 
-            return $this->merge($merged, $config[$section]);
+            $merged = $this->merge($merged, $config[$section]);
         }
 
         return $merged;
@@ -437,5 +439,4 @@ class Space
     {
         $this->placeholders[$placeholder] = $value;
     }
-
 }

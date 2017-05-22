@@ -137,4 +137,47 @@ class SpaceTest extends PHPUnit_Framework_TestCase
         $this->assertSame('abc', $space->get('test.key1'));
         $this->assertSame('bcd', $space->get('key2'));
     }
+
+    /**
+     * test uncached get with placeholders
+     */
+    public function testMerging()
+    {
+        $cache = $this->getMockBuilder(Cache::class)
+            ->setConstructorArgs(['/tmp'])
+            ->getMock();
+
+        $cache->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(false));
+
+        $parser = new Dummy();
+        $parser->setContent([
+            'all' => [
+                'test' => [
+                    'key1' => 'allValue1'
+                ],
+                'key2' => 'allValue2',
+
+            ],
+            'dev' => [
+                'test' => [
+                    'key1' => 'devValue1',
+                ],
+                'test2' => [
+                    'key3' => 'devValue3',
+                ],
+            ]
+        ]);
+
+        $space = new Space('test');
+        $space->setCache($cache);
+        $space->setParser($parser);
+        $space->setSections('all', 'dev');
+        $space->addPath('/');
+
+        $this->assertSame('devValue1', $space->get('test.key1'));
+        $this->assertSame('allValue2', $space->get('key2'));
+        $this->assertSame('devValue3', $space->get('test2.key3'));
+    }
 }

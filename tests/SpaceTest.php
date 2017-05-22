@@ -2,7 +2,7 @@
 
 namespace TheIconic\Config;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use TheIconic\Config\Exception\PreconditionException;
 use TheIconic\Config\Parser\Autodetect;
 use TheIconic\Config\Parser\Dummy;
@@ -12,7 +12,7 @@ use TheIconic\Config\Parser\Dummy;
  *
  * @package TheIconic\Config
  */
-class SpaceTest extends PHPUnit_Framework_TestCase
+class SpaceTest extends TestCase
 {
     /**
      * test cached get
@@ -215,8 +215,8 @@ class SpaceTest extends PHPUnit_Framework_TestCase
             'abc' => 'abc',
         ]);
         
-        $this->setExpectedException(PreconditionException::class);
-        
+        $this->expectException(PreconditionException::class);
+
         $space = new Space('test');
         $space->setCache($cache);
         $space->setParser($parser);

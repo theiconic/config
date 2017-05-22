@@ -2,7 +2,7 @@
 
 namespace TheIconic\Config\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use TheIconic\Config\Exception\ParserException;
 
@@ -11,7 +11,7 @@ use TheIconic\Config\Exception\ParserException;
  *
  * @package TheIconic\Config\Parser
  */
-class JsonTest extends PHPUnit_Framework_TestCase
+class JsonTest extends TestCase
 {
     /**
      * test parse()
@@ -82,7 +82,7 @@ EOF;
 
         $parser = new Json();
 
-        $this->setExpectedException(ParserException::class);
+        $this->expectException(ParserException::class);
 
         $parser->parse(vfsStream::url('jsontest/config.json'));
     }
@@ -101,7 +101,7 @@ EOF;
 
         $parser = new Json();
 
-        $this->setExpectedException(ParserException::class);
+        $this->expectException(ParserException::class);
 
         $parser->parse(vfsStream::url('jsontest/config.json'));
     }

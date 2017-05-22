@@ -2,7 +2,7 @@
 
 namespace TheIconic\Config\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use TheIconic\Config\Exception\ParserException;
 
 /**
@@ -10,7 +10,7 @@ use TheIconic\Config\Exception\ParserException;
  *
  * @package TheIconic\Config\Parser
  */
-class AutodetectTest extends PHPUnit_Framework_TestCase
+class AutodetectTest extends TestCase
 {
     /**
      * test parsing of ini file
@@ -49,7 +49,7 @@ class AutodetectTest extends PHPUnit_Framework_TestCase
             'php' => new Php(),
         ]);
 
-        $this->setExpectedException(ParserException::class);
+        $this->expectException(ParserException::class);
         $parser->parse('config.json');
     }
 

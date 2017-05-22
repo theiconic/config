@@ -2,7 +2,7 @@
 
 namespace TheIconic\Config\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use TheIconic\Config\Exception\ParserException;
 
@@ -11,7 +11,7 @@ use TheIconic\Config\Exception\ParserException;
  *
  * @package TheIconic\Config\Parser
  */
-class PhpTest extends PHPUnit_Framework_TestCase
+class PhpTest extends TestCase
 {
     /**
      * test parse()
@@ -84,7 +84,7 @@ EOF;
 
         $parser = new Php();
 
-        $this->setExpectedException(ParserException::class);
+        $this->expectException(ParserException::class);
 
         $parser->parse(vfsStream::url('phptest/config.php'));
     }

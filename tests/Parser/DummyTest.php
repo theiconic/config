@@ -2,14 +2,14 @@
 
 namespace TheIconic\Config\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * test Dummy parser
  *
  * @package TheIconic\Config\Parser
  */
-class DummyTest extends PHPUnit_Framework_TestCase
+class DummyTest extends TestCase
 {
     /**
      * test parse()

@@ -2,7 +2,7 @@
 
 namespace TheIconic\Config\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use TheIconic\Config\Exception\ParserException;
 
@@ -11,7 +11,7 @@ use TheIconic\Config\Exception\ParserException;
  *
  * @package TheIconic\Config\Parser
  */
-class IniTest extends PHPUnit_Framework_TestCase
+class IniTest extends TestCase
 {
     /**
      * test parse()
@@ -72,7 +72,7 @@ EOF;
 
         $parser = new Ini();
         
-        $this->setExpectedException(ParserException::class);
+        $this->expectException(ParserException::class);
 
         $parser->parse(vfsStream::url('initest/config.ini'));
     }

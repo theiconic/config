@@ -1,6 +1,6 @@
 {
     "name": "theiconic/config",
-    "description": "more or less generic config module",
+    "description": "configuration handler for file based configuration",
     "authors": [
         {
             "name": "TheIconic Engineering",
@@ -15,6 +15,7 @@
     "require": {},
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^6.0",
+        "satooshi/php-coveralls": "^1.0"
     }
 }

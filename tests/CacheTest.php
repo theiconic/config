@@ -2,12 +2,12 @@
 
 namespace TheIconic\Config;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use TheIconic\Config\Parser\Dummy;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 
-class CacheTest extends PHPUnit_Framework_TestCase
+class CacheTest extends TestCase
 {
     /**
      * @var vfsStreamDirectory stores the vfsStream root
@@ -186,6 +186,6 @@ EOF;
         $basePath = vfsStream::url('cachetest');
         $cache = new Cache($basePath);
 
-        $cache->isValid('non_existing_cache_key', time());
+        $this->assertFalse($cache->isValid('non_existing_cache_key', time()));
     }
 }

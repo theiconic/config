@@ -39,7 +39,7 @@ class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
-        $this->setExpectedException(PreconditionException::class);
+        $this->expectException(PreconditionException::class);
 
         $factory->getSpace('test');
     }

@@ -37,7 +37,8 @@ class SpaceTest extends PHPUnit_Framework_TestCase
 
         $space = new Space('test');
         $space->setCache($cache);
-        $space->setSections('all', 'dev');
+        $space->setSections(['all']);
+        $space->addSection('dev');
 
         $this->assertSame('abc', $space->get('test.key'));
     }
@@ -66,7 +67,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
 
         $space = new Space('test');
         $space->setCache($cache);
-        $space->setSections('all', 'dev');
+        $space->setSections(['all', 'dev']);
         $space->setParser($parser);
         $space->addPath('/');
 
@@ -97,7 +98,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
 
         $space = new Space('test');
         $space->setCache($cache);
-        $space->setSections('all', 'dev');
+        $space->setSections(['all', 'dev']);
 
         $this->assertSame([
             'test.key1' => 'abc',
@@ -131,7 +132,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
         $space = new Space('test');
         $space->setCache($cache);
         $space->setParser($parser);
-        $space->setSections('all', 'dev');
+        $space->setSections(['all', 'dev']);
         $space->addPath('/');
         $space->setPlaceholders([
             '%value1%' => 'abc',
@@ -187,7 +188,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
         $space = new Space('test');
         $space->setCache($cache);
         $space->setParser($parser);
-        $space->setSections('all', 'dev');
+        $space->setSections(['all', 'dev']);
         $space->addPath('/');
 
         $this->assertSame('devValue1', $space->get('test.key1'));
@@ -244,7 +245,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
         $space = new Space('test');
         $space->setCache($cache);
         $space->setParser($parser);
-        $space->setSections('all');
+        $space->setSections(['all']);
         $this->assertSame('abcd', $space->get('non_existing_key', 'abcd'));
     }
 
@@ -280,7 +281,7 @@ class SpaceTest extends PHPUnit_Framework_TestCase
 
         $space->setPaths(['/tmp/config/a.ini', '/tmp/config/b.ini', '/tmp/config/c.ini']);
         $space->setParser($parser);
-        $space->setSections('all');
+        $space->setSections(['all']);
         $space->setCache($cache);
         
         $space->get('abc');

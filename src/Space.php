@@ -191,7 +191,7 @@ class Space
             throw new PreconditionException('No sections have been configured.');
         }
 
-        foreach ($this->getSections() as $section) {
+        foreach (array_unique($this->getSections()) as $section) {
             $section = strtolower($section);
 
             if (!isset($config[$section])) {
@@ -238,13 +238,27 @@ class Space
     }
 
     /**
-     * set the environment
+     * set the sections to use
      *
+     * @param array $sections
      * @return $this
      */
-    public function setSections()
+    public function setSections(array $sections)
     {
-        $this->sections = func_get_args();
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     * @param string $section
+     * @return $this
+     */
+    public function addSection(string $section)
+    {
+        if (!in_array($section, $this->sections)) {
+            $this->sections[] = $section;
+        }
 
         return $this;
     }

@@ -36,6 +36,8 @@ class DummyTest extends PHPUnit_Framework_TestCase
 
         $parser = new Dummy();
         $parser->setContent($content);
+        
+        $this->assertSame($content, $parser->getContent());
 
         $this->assertSame([
             'all' => [

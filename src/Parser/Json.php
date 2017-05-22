@@ -11,7 +11,6 @@ use TheIconic\Config\Exception\ParserException;
  */
 class Json extends AbstractParser
 {
-
     /**
      * parses a json config file containing a config array
      *
@@ -22,11 +21,18 @@ class Json extends AbstractParser
     {
         $config = json_decode(file_get_contents($file), true);
 
-        if (false === $config) {
-            throw new ParserException(sprintf('Couldn\'t parse config file %s', $file));
+        if (!is_array($config)) {
+            $error = json_last_error();
+
+            if ($error === JSON_ERROR_NONE) {
+                $message = 'Invalid configuration format';
+            } else {
+                $message = json_last_error_msg();
+            }
+
+            throw new ParserException(sprintf('Couldn\'t parse config file %s: %s', $file, $message));
         }
 
         return $config;
     }
-
 }

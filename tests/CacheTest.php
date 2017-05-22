@@ -66,11 +66,11 @@ class CacheTest extends PHPUnit_Framework_TestCase
      */
     protected function getSourcePaths()
     {
-        return array(
+        return [
             vfsStream::url('cachetest/application.ini'),
             vfsStream::url('cachetest/local.ini'),
             vfsStream::url('cachetest/dev.ini'),
-        );
+        ];
     }
 
     /**
@@ -143,8 +143,11 @@ class CacheTest extends PHPUnit_Framework_TestCase
             ->withContent('<?php return ' . var_export($this->getDummyCachedConfig(), true) . ';')
             ->lastModified($time);
 
-        $cache = new Cache(vfsStream::url('cachetest'));
+        $basePath = vfsStream::url('cachetest');
 
+        $cache = new Cache($basePath);
+        
+        $this->assertSame($basePath, $cache->getBasePath());
         $this->assertSame($this->getDummyCachedConfig(), $cache->read('cachefile'));
     }
 
@@ -154,7 +157,9 @@ class CacheTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('allow_url_fopen is not enabled');
         }
 
-        $cache = new Cache(vfsStream::url('cachetest'));
+        $basePath = vfsStream::url('cachetest') . '/foo/bar';
+
+        $cache = new Cache($basePath);
 
         $cache->write('cachefile', $this->getDummyCachedConfig(), $this->getSourcePaths());
 
@@ -173,6 +178,14 @@ return array (
 );
 EOF;
 
-        $this->assertSame($expected, file_get_contents(vfsStream::url('cachetest/cachefile.php')));
+        $this->assertSame($expected, file_get_contents(vfsStream::url('cachetest/foo/bar/cachefile.php')));
+    }
+    
+    public function testNonReadable()
+    {
+        $basePath = vfsStream::url('cachetest');
+        $cache = new Cache($basePath);
+
+        $cache->isValid('non_existing_cache_key', time());
     }
 }

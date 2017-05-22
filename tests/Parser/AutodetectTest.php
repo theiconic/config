@@ -3,6 +3,7 @@
 namespace TheIconic\Config\Parser;
 
 use PHPUnit_Framework_TestCase;
+use TheIconic\Config\Exception\ParserException;
 
 /**
  * test Autodetect parser
@@ -38,5 +39,27 @@ class AutodetectTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame('ini', $parser->parse('config.ini'));
         $this->assertSame('php', $parser->parse('config.php'));
+    }
+
+    public function testUnsupported()
+    {
+        $parser = new Autodetect();
+        $parser->setParsers([
+            'ini' => new Ini(),
+            'php' => new Php(),
+        ]);
+
+        $this->setExpectedException(ParserException::class);
+        $parser->parse('config.json');
+    }
+
+    public function testUnconfigured() {
+        $parser = new Autodetect();
+        
+        $this->assertEquals([
+            'php' => new Php(),
+            'json' => new Json(),
+            'ini' => new Ini(),
+        ], $parser->getParsers());
     }
 }

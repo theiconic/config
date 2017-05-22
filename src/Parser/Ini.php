@@ -3,6 +3,7 @@
 namespace TheIconic\Config\Parser;
 
 use TheIconic\Config\Exception\ParserException;
+use Throwable;
 
 /**
  * config file parser for ini files
@@ -20,11 +21,16 @@ class Ini extends AbstractParser
      */
     public function parse($file)
     {
-        $config = parse_ini_string(file_get_contents($file), true);
+        try {
+            $config = parse_ini_string(file_get_contents($file), true);
 
-        if (false === $config) {
+            if (false === $config) {
+                throw new ParserException(sprintf('Couldn\'t parse config file %s', $file));
+            }
+        } catch (Throwable $e) {
             throw new ParserException(sprintf('Couldn\'t parse config file %s', $file));
         }
+
 
         return $this->expand($config);
     }

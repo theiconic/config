@@ -4,6 +4,7 @@ namespace TheIconic\Config\Parser;
 
 use PHPUnit_Framework_TestCase;
 use org\bovigo\vfs\vfsStream;
+use TheIconic\Config\Exception\ParserException;
 
 /**
  * test Php parser
@@ -37,7 +38,7 @@ class JsonTest extends PHPUnit_Framework_TestCase
 }
 EOF;
 
-        $root = vfsStream::setup('initest');
+        $root = vfsStream::setup('jsontest');
         vfsStream::newFile('config.json')
             ->at($root)
             ->withContent($content);
@@ -60,6 +61,48 @@ EOF;
                     ]
                 ]
             ]
-        ], $parser->parse(vfsStream::url('initest/config.json')));
+        ], $parser->parse(vfsStream::url('jsontest/config.json')));
+    }
+
+    /**
+     * test parse()
+     */
+    public function testParseInvalidFile()
+    {
+        $content = <<<EOF
+abcdefg=asdf=asdf=
+asdfasdf
+{asdfasfd}
+EOF;
+
+        $root = vfsStream::setup('jsontest');
+        vfsStream::newFile('config.json')
+            ->at($root)
+            ->withContent($content);
+
+        $parser = new Json();
+
+        $this->setExpectedException(ParserException::class);
+
+        $parser->parse(vfsStream::url('jsontest/config.json'));
+    }
+
+    /**
+     * test parse()
+     */
+    public function testParseInvalidConfig()
+    {
+        $content = 'true';
+
+        $root = vfsStream::setup('jsontest');
+        vfsStream::newFile('config.json')
+            ->at($root)
+            ->withContent($content);
+
+        $parser = new Json();
+
+        $this->setExpectedException(ParserException::class);
+
+        $parser->parse(vfsStream::url('jsontest/config.json'));
     }
 }

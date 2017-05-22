@@ -25,7 +25,7 @@ class Cache
      */
     public function __construct($basePath)
     {
-        $this->basePath = $basePath;
+        $this->setBasePath($basePath);
     }
 
     /**

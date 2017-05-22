@@ -130,12 +130,11 @@ EOF;
 
     /**
      * get the base path
-     * 
+     *
      * @return string
      */
     public function getBasePath()
     {
         return $this->basePath;
     }
-
 }

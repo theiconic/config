@@ -48,5 +48,4 @@ class Dummy extends AbstractParser
 
         return $this;
     }
-
 }

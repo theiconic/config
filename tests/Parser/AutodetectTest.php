@@ -53,7 +53,8 @@ class AutodetectTest extends PHPUnit_Framework_TestCase
         $parser->parse('config.json');
     }
 
-    public function testUnconfigured() {
+    public function testUnconfigured()
+    {
         $parser = new Autodetect();
         
         $this->assertEquals([

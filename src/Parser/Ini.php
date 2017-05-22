@@ -57,7 +57,7 @@ class Ini extends AbstractParser
 
             if (is_array($value)) {
                 $tmp = $this->expand($value);
-            } else if (is_string($value) && in_array($value, ['true', 'false'])) {
+            } elseif (is_string($value) && in_array($value, ['true', 'false'])) {
                 $tmp = ($value === 'false') ? false : true;
             } else {
                 $tmp = $value;
@@ -66,5 +66,4 @@ class Ini extends AbstractParser
 
         return $expanded;
     }
-
 }

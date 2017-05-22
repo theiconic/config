@@ -33,5 +33,4 @@ class Php extends AbstractParser
 
         return $config;
     }
-
 }

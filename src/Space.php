@@ -135,7 +135,7 @@ class Space
         foreach ($config as $key => $value) {
             if (is_array($value)) {
                 $config[$key] = $this->replacePlaceholders($value);
-            } else if (is_string($value)) {
+            } elseif (is_string($value)) {
                 $config[$key] = strtr($value, $this->placeholders);
             }
         }
@@ -370,7 +370,7 @@ class Space
      *
      * @param array $base
      * @param array $subject
-     * 
+     *
      * @return array
      */
     protected function merge(array $base, array $subject)
@@ -384,9 +384,9 @@ class Space
             foreach ($subject as $k => $v) {
                 if (is_numeric($k)) {
                     $base[] = $v;
-                } else if (!array_key_exists($k, $base)) {
+                } elseif (!array_key_exists($k, $base)) {
                     $base[$k] = $v;
-                } else if (is_array($v) || is_array($base[$k])) {
+                } elseif (is_array($v) || is_array($base[$k])) {
                     $base[$k] = $this->merge((array) $base[$k], (array) $v);
                 } else {
                     $base[$k] = $v;

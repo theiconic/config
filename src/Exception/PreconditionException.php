@@ -6,5 +6,4 @@ use LogicException;
 
 class PreconditionException extends LogicException
 {
-
 }

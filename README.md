@@ -135,4 +135,4 @@ user.home = %ENV_HOME%
 
 ## License
 
-THE ICONIC Name Parser library for PHP is released under the MIT License.
+THE ICONIC config library for PHP is released under the MIT License.

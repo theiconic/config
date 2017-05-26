@@ -2,6 +2,14 @@
 
 General purpose config manager for file-based configuration.
 
+[![Build Status](https://travis-ci.org/theiconic/config.svg?branch=master)](https://travis-ci.org/theiconic/config)
+[![Coverage Status](https://coveralls.io/repos/github/theiconic/config/badge.svg?branch=master)](https://coveralls.io/github/theiconic/config?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/theiconic/config/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/theiconic/config/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/theiconic/config/v/stable)](https://packagist.org/packages/theiconic/config)
+[![Total Downloads](https://poser.pugx.org/theiconic/config/downloads)](https://packagist.org/packages/theiconic/config)
+[![License](https://poser.pugx.org/theiconic/config/license)](https://packagist.org/packages/theiconic/config)
+[![Dependency Status](https://www.versioneye.com/user/projects/5927a989f5a9a60048c5a326/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5927a989f5a9a60048c5a326)
+
 ## Setup
 ```$php
 composer require theiconic/config

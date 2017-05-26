@@ -1,6 +1,8 @@
 {
     "name": "theiconic/config",
     "description": "configuration handler for file based configuration",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "TheIconic Engineering",
@@ -12,7 +14,9 @@
             "TheIconic\\Config\\": ["src/", "test/"]
         }
     },
-    "require": {},
+    "require": {
+        "php": ">=7.0"
+    },
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^6.0",

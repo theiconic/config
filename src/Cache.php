@@ -42,6 +42,7 @@ class Cache
     /**
      * get the path to the cache config file for the current environment
      *
+     * @param string $key the cache key
      * @return string the file path
      */
     protected function getCacheFile($key)
@@ -53,6 +54,8 @@ class Cache
      * checks if the cached config is still
      * up to date or needs to be regenerated
      *
+     * @param string $key the cache key
+     * @param $timestamp
      * @return bool
      */
     public function isValid($key, $timestamp)
@@ -71,9 +74,28 @@ class Cache
      *
      * @param string $key the cache key
      * @param array $config the config array
+     * @param array $sourcePaths the array of source config paths cached in this file
      * @return $this
      */
     public function write($key, array $config, array $sourcePaths = [])
+    {
+        $cacheFile = $this->getCacheFile($key);
+
+        if (!is_dir(dirname($cacheFile))) {
+            mkdir(dirname($cacheFile), 0777, true);
+        }
+
+        file_put_contents($cacheFile, $this->compile($config, $sourcePaths));
+
+        return $this;
+    }
+
+    /**
+     * @param array $config
+     * @param array $sourcePaths
+     * @return mixed|string
+     */
+    protected function compile(array $config, array $sourcePaths = [])
     {
         $content = <<<EOF
 <?php
@@ -88,23 +110,16 @@ EOF;
         $content .= PHP_EOL;
         $content .= 'return ' . var_export($config, true) . ';';
 
-        $cacheFile = $this->getCacheFile($key);
-
-        if (!is_dir(dirname($cacheFile))) {
-            mkdir(dirname($cacheFile), 0777, true);
-        }
-
-        file_put_contents($cacheFile, $content);
-
-        return $this;
+        return $content;
     }
 
     /**
      * format source paths - only used for the cache config file teaser above
      *
+     * @param array $sourcePaths
      * @return string
      */
-    protected function formatSourcePaths($sourcePaths)
+    protected function formatSourcePaths(array $sourcePaths)
     {
         $formatted = '';
 

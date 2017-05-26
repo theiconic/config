@@ -145,17 +145,27 @@ class Space
         }
 
         foreach ($config as $key => $value) {
-            if (is_array($value)) {
-                $config[$key] = $this->replacePlaceholders($value);
-                continue;
-            }
-
-            if (is_string($value)) {
-                $config[$key] = strtr($value, $this->placeholders);
-            }
+            $config[$key] = $this->processValue($value);
         }
 
         return $config;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function processValue($value)
+    {
+        if (is_array($value)) {
+            return $this->replacePlaceholders($value);
+        }
+
+        if (is_string($value)) {
+            return strtr($value, $this->placeholders);
+        }
+
+        return $value;
     }
 
     /**
@@ -410,9 +420,7 @@ class Space
         foreach ($subject as $k => $v) {
             if (is_numeric($k)) {
                 $base[] = $v;
-            } elseif (!array_key_exists($k, $base)) {
-                $base[$k] = $v;
-            } elseif (is_array($v) || is_array($base[$k])) {
+            } elseif (array_key_exists($k, $base) && (is_array($v) || is_array($base[$k]))) {
                 $base[$k] = $this->merge((array) $base[$k], (array) $v);
             } else {
                 $base[$k] = $v;

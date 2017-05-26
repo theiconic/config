@@ -31,7 +31,6 @@ class Ini extends AbstractParser
             throw new ParserException(sprintf('Couldn\'t parse config file %s', $file));
         }
 
-
         return $this->expand($config);
     }
 
@@ -55,15 +54,26 @@ class Ini extends AbstractParser
                 $tmp =& $tmp[$segment];
             }
 
-            if (is_array($value)) {
-                $tmp = $this->expand($value);
-            } elseif (is_string($value) && in_array($value, ['true', 'false'])) {
-                $tmp = ($value === 'false') ? false : true;
-            } else {
-                $tmp = $value;
-            }
+            $tmp = $this->expandValue($value);
         }
 
         return $expanded;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function expandValue($value)
+    {
+        if (is_array($value)) {
+            return $this->expand($value);
+        }
+
+        if (is_string($value) && in_array($value, ['true', 'false'])) {
+            return ($value !== 'false');
+        }
+
+        return $value;
     }
 }

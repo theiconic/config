@@ -14,9 +14,8 @@ use TheIconic\Config\Parser\Autodetect as Parser;
  */
 class Space
 {
-
     /**
-     * @var null|array stores the config
+     * @var Config
      */
     protected $config;
 
@@ -65,22 +64,25 @@ class Space
     }
 
     /**
-     * get the config value for a given key or the entire config if key is omitted
-     * allows specifying a default that is used if key is not present in config
-     *
-     * @param string|null $key the config key
-     * @param mixed|null $default the default value
-     * @return array|mixed|null the config value or the entire configuration array
+     * @param null $key
+     * @param null $default
+     * @return array|mixed|null
      */
     public function get($key = null, $default = null)
     {
         $this->init();
 
-        if (null === $key) {
-            return $this->config;
-        }
+        return $this->config->get($key, $default);
+    }
 
-        return $this->resolve($key, $default);
+    /**
+     * @return array
+     */
+    public function flatten()
+    {
+        $this->init();
+
+        return $this->config->flatten();
     }
 
     /**
@@ -98,19 +100,13 @@ class Space
         $cacheKey = $this->getCacheKey();
 
         if ($cache->isValid($cacheKey, $this->getTimestamp())) {
-            $this->config = $cache->read($cacheKey);
+            $config = $cache->read($cacheKey);
         } else {
-            $this->config = $this->parse();
-            $cache->write($cacheKey, $this->config, $this->getPaths());
+            $config = $this->parse();
+            $cache->write($cacheKey, $config, $this->getPaths());
         }
-    }
 
-    /**
-     * @return array
-     */
-    public function flatten()
-    {
-        return $this->doFlatten($this->get());
+        $this->config = new Config($config);
     }
 
     /**
@@ -145,27 +141,17 @@ class Space
         }
 
         foreach ($config as $key => $value) {
-            $config[$key] = $this->processValue($value);
+            if (is_array($value)) {
+                $config[$key] = $this->replacePlaceholders($value);
+                continue;
+            }
+
+            if (is_string($value)) {
+                $config[$key] = strtr($value, $this->placeholders);
+            }
         }
 
         return $config;
-    }
-
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function processValue($value)
-    {
-        if (is_array($value)) {
-            return $this->replacePlaceholders($value);
-        }
-
-        if (is_string($value)) {
-            return strtr($value, $this->placeholders);
-        }
-
-        return $value;
     }
 
     /**
@@ -357,52 +343,6 @@ class Space
     protected function getCacheKey()
     {
         return strtolower(md5(sprintf('%s_%s', implode('::', $this->getPaths()), implode('::', $this->getSections()))));
-    }
-
-    /**
-     * @param string $path
-     * @param mixed|null $default
-     * @return array|mixed|null
-     */
-    protected function resolve($path, $default = null)
-    {
-        $segments = explode('.', $path);
-        $result = $this->config;
-
-        foreach ($segments as $segment) {
-            if (!isset($result[$segment])) {
-                return $default;
-            }
-
-            $result = $result[$segment];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param array $config
-     * @return array
-     */
-    protected function doFlatten($config)
-    {
-        $flattened = [];
-
-        foreach ($config as $key => $value) {
-            if (is_array($value)) {
-                $tmp = $this->doFlatten($value);
-
-                foreach ($tmp as $k => $v) {
-                    $flattened[$key . '.' . $k] = $v;
-                }
-
-                continue;
-            }
-
-            $flattened[$key] = $value;
-        }
-
-        return $flattened;
     }
 
     /**

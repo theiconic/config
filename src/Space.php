@@ -74,23 +74,35 @@ class Space
      */
     public function get($key = null, $default = null)
     {
-        if (null === $this->config) {
-            $cache = $this->getCache();
-            $cacheKey = $this->getCacheKey();
-            
-            if ($cache->isValid($cacheKey, $this->getTimestamp())) {
-                $this->config = $cache->read($cacheKey);
-            } else {
-                $this->config = $this->parse();
-                $cache->write($cacheKey, $this->config, $this->getPaths());
-            }
-        }
+        $this->init();
 
         if (null === $key) {
             return $this->config;
         }
 
         return $this->resolve($key, $default);
+    }
+
+    /**
+     * initialize the config space
+     *
+     * loads the config from cache or the config files
+     */
+    protected function init()
+    {
+        if (null !== $this->config) {
+            return;
+        }
+
+        $cache = $this->getCache();
+        $cacheKey = $this->getCacheKey();
+
+        if ($cache->isValid($cacheKey, $this->getTimestamp())) {
+            $this->config = $cache->read($cacheKey);
+        } else {
+            $this->config = $this->parse();
+            $cache->write($cacheKey, $this->config, $this->getPaths());
+        }
     }
 
     /**
@@ -135,7 +147,10 @@ class Space
         foreach ($config as $key => $value) {
             if (is_array($value)) {
                 $config[$key] = $this->replacePlaceholders($value);
-            } elseif (is_string($value)) {
+                continue;
+            }
+
+            if (is_string($value)) {
                 $config[$key] = strtr($value, $this->placeholders);
             }
         }
@@ -342,8 +357,8 @@ class Space
     protected function resolve($path, $default = null)
     {
         $segments = explode('.', $path);
-
         $result = $this->config;
+
         foreach ($segments as $segment) {
             if (!isset($result[$segment])) {
                 return $default;
@@ -366,45 +381,41 @@ class Space
         foreach ($config as $key => $value) {
             if (is_array($value)) {
                 $tmp = $this->doFlatten($value);
+
                 foreach ($tmp as $k => $v) {
                     $flattened[$key . '.' . $k] = $v;
                 }
-            } else {
-                $flattened[$key] = $value;
+
+                continue;
             }
+
+            $flattened[$key] = $value;
         }
 
         return $flattened;
     }
 
     /**
-     * merge arrays recursively
+     * recursively merges the arrays
      * later keys overload earlier keys
      * numeric keys are appended
      *
      * @param array $base
      * @param array $subject
      *
-     * @return array
+     * @return array the result of the merge
      */
-    protected function merge(array $base, array $subject)
+    protected function merge(array $base, array $subject): array
     {
-        $args = func_get_args();
-        $base = array_shift($args);
-
-        while (!empty($args)) {
-            $subject = array_shift($args);
-
-            foreach ($subject as $k => $v) {
-                if (is_numeric($k)) {
-                    $base[] = $v;
-                } elseif (!array_key_exists($k, $base)) {
-                    $base[$k] = $v;
-                } elseif (is_array($v) || is_array($base[$k])) {
-                    $base[$k] = $this->merge((array) $base[$k], (array) $v);
-                } else {
-                    $base[$k] = $v;
-                }
+        foreach ($subject as $k => $v) {
+            if (is_numeric($k)) {
+                $base[] = $v;
+            } elseif (!array_key_exists($k, $base)) {
+                $base[$k] = $v;
+            } elseif (is_array($v) || is_array($base[$k])) {
+                $base[$k] = $this->merge((array) $base[$k], (array) $v);
+            } else {
+                $base[$k] = $v;
             }
         }
 

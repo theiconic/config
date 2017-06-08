@@ -196,20 +196,14 @@ class Space
     {
         $merged = [];
 
-        $sections = $this->getSections();
+        $sections = array_unique($this->getSections());
 
         if (empty($sections)) {
             throw new PreconditionException('No sections have been configured.');
         }
 
-        foreach (array_unique($this->getSections()) as $section) {
-            $section = strtolower($section);
-
-            if (!isset($config[$section])) {
-                continue;
-            }
-
-            $merged = $this->merge($merged, $config[$section]);
+        foreach ($sections as $section) {
+            $merged = $this->merge($merged, $config[strtolower($section)] ?? []);
         }
 
         return $merged;

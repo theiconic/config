@@ -57,9 +57,10 @@ class Config
 
     /**
      * @param array|null $config
+     * @param string $prefix
      * @return array
      */
-    public function flatten(array $config = null): array
+    public function flatten(array $config = null, $prefix = ''): array
     {
         $flattened = [];
 
@@ -69,16 +70,11 @@ class Config
 
         foreach ($config as $key => $value) {
             if (is_array($value)) {
-                $tmp = $this->flatten($value);
-
-                foreach ($tmp as $k => $v) {
-                    $flattened[$key . '.' . $k] = $v;
-                }
-
+                $flattened += $this->flatten($value, $prefix . $key . '.');
                 continue;
             }
 
-            $flattened[$key] = $value;
+            $flattened[$prefix . $key] = $value;
         }
 
         return $flattened;

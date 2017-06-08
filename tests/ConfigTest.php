@@ -31,11 +31,21 @@ class ConfigTest extends TestCase
                 'key1' => 'abc',
             ],
             'key2' => 'bcd',
+            'test1' => [
+                'test2' => [
+                    'key3' => 3,
+                    'key4' => 4,
+                ],
+                'key5' => 5,
+            ]
         ]);
 
         $this->assertSame([
             'test.key1' => 'abc',
             'key2' => 'bcd',
+            'test1.test2.key3' => 3,
+            'test1.test2.key4' => 4,
+            'test1.key5' => 5
         ], $config->flatten());
     }
 }

@@ -277,9 +277,9 @@ class Space
     /**
      * get the parser
      *
-     * @return Parser
+     * @return AbstractParser
      */
-    public function getParser(): Parser
+    public function getParser(): AbstractParser
     {
         if (null === $this->parser) {
             $this->parser = new Parser();

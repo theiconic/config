@@ -46,9 +46,9 @@ class Factory
 
     /**
      * @param $name
-     * @return mixed
+     * @return Space
      */
-    public function getSpace($name)
+    public function getSpace($name): Space
     {
         $name = strtolower($name);
 
@@ -64,9 +64,9 @@ class Factory
 
     /**
      * @param $path
-     * @return $this
+     * @return Factory
      */
-    public function setCachePath($path)
+    public function setCachePath($path): Factory
     {
         $this->cachePath = $path;
 
@@ -74,9 +74,9 @@ class Factory
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCachePath()
+    public function getCachePath(): string
     {
         if (null === $this->cachePath) {
             throw new PreconditionException('Cache path has not been set.');
@@ -88,7 +88,7 @@ class Factory
     /**
      * @return Cache
      */
-    public function getCache()
+    public function getCache(): Cache
     {
         if (null === $this->cache) {
             $this->cache = new Cache($this->getCachePath());
@@ -99,9 +99,9 @@ class Factory
 
     /**
      * @param Cache $cache
-     * @return $this
+     * @return Factory
      */
-    public function setCache(Cache $cache)
+    public function setCache(Cache $cache): Factory
     {
         $this->cache = $cache;
 

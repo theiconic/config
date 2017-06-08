@@ -56,9 +56,9 @@ class Space
 
     /**
      * Space constructor.
-     * @param $name
+     * @param string $name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -78,7 +78,7 @@ class Space
     /**
      * @return array
      */
-    public function flatten()
+    public function flatten(): array
     {
         $this->init();
 
@@ -114,7 +114,7 @@ class Space
      *
      * @return array the parsed and flattened config array
      */
-    protected function parse()
+    protected function parse(): array
     {
         $parser = $this->getParser();
 
@@ -134,7 +134,7 @@ class Space
      * @param array $config
      * @return array
      */
-    protected function replacePlaceholders(array $config)
+    protected function replacePlaceholders(array $config): array
     {
         if (empty($this->placeholders)) {
             return $config;
@@ -157,7 +157,7 @@ class Space
     /**
      * @return int
      */
-    protected function getTimestamp()
+    protected function getTimestamp(): int
     {
         $timestamp = 0;
         foreach ($this->getReadableSources() as $path) {
@@ -173,7 +173,7 @@ class Space
      *
      * @return array
      */
-    protected function getReadableSources()
+    protected function getReadableSources(): array
     {
         $paths = [];
 
@@ -192,7 +192,7 @@ class Space
      * @param array $config the raw config array
      * @return array the flattened config array
      */
-    protected function flattenSections(array $config)
+    protected function flattenSections(array $config): array
     {
         $merged = [];
 
@@ -220,7 +220,7 @@ class Space
      *
      * @return Cache
      */
-    public function getCache()
+    public function getCache(): Cache
     {
         return $this->cache;
     }
@@ -229,9 +229,9 @@ class Space
      * set the config cache handler
      *
      * @param Cache $cache
-     * @return $this
+     * @return Space
      */
-    public function setCache(Cache $cache)
+    public function setCache(Cache $cache): Space
     {
         $this->cache = $cache;
 
@@ -243,7 +243,7 @@ class Space
      *
      * @return array
      */
-    public function getSections()
+    public function getSections(): array
     {
         return $this->sections;
     }
@@ -252,9 +252,9 @@ class Space
      * set the sections to use
      *
      * @param array $sections
-     * @return $this
+     * @return Space
      */
-    public function setSections(array $sections)
+    public function setSections(array $sections): Space
     {
         $this->sections = $sections;
 
@@ -263,9 +263,9 @@ class Space
 
     /**
      * @param string $section
-     * @return $this
+     * @return Space
      */
-    public function addSection(string $section)
+    public function addSection(string $section): Space
     {
         if (!in_array($section, $this->sections)) {
             $this->sections[] = $section;
@@ -279,7 +279,7 @@ class Space
      *
      * @return Parser
      */
-    public function getParser()
+    public function getParser(): Parser
     {
         if (null === $this->parser) {
             $this->parser = new Parser();
@@ -292,9 +292,9 @@ class Space
      * set the parser
      *
      * @param AbstractParser $parser
-     * @return $this
+     * @return Space
      */
-    public function setParser(AbstractParser $parser)
+    public function setParser(AbstractParser $parser): Space
     {
         $this->parser = $parser;
 
@@ -340,7 +340,7 @@ class Space
      *
      * @return string the file path
      */
-    protected function getCacheKey()
+    protected function getCacheKey(): string
     {
         return strtolower(md5(sprintf('%s_%s', implode('::', $this->getPaths()), implode('::', $this->getSections()))));
     }
@@ -373,16 +373,16 @@ class Space
     /**
      * @return array
      */
-    public function getPlaceholders()
+    public function getPlaceholders(): array
     {
         return $this->placeholders;
     }
 
     /**
      * @param array $placeholders
-     * @return $this
+     * @return Space
      */
-    public function setPlaceholders(array $placeholders)
+    public function setPlaceholders(array $placeholders): Space
     {
         $this->placeholders = $placeholders;
 
@@ -390,11 +390,14 @@ class Space
     }
 
     /**
-     * @param $placeholder
-     * @param $value
+     * @param string $placeholder
+     * @param mixed $value
+     * @return Space
      */
-    public function addPlaceholder($placeholder, $value)
+    public function addPlaceholder($placeholder, $value): Space
     {
         $this->placeholders[$placeholder] = $value;
+
+        return $this;
     }
 }

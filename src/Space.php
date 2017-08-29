@@ -330,13 +330,17 @@ class Space
     }
 
     /**
-     * get the path to the cache config file for the current environment
-     *
-     * @return string the file path
+     * @return string the cache key
      */
     protected function getCacheKey(): string
     {
-        return strtolower(md5(sprintf('%s_%s', implode('::', $this->getPaths()), implode('::', $this->getSections()))));
+        $parts = [
+            implode('::', $this->getPaths()),
+            implode('::', $this->getSections()),
+            json_encode($this->placeholders),
+        ];
+
+        return strtolower(md5(implode('_', $parts)));
     }
 
     /**

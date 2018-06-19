@@ -128,22 +128,7 @@ class CacheTest extends TestCase
      */
     public function testRead()
     {
-        if (!ini_get('allow_url_fopen')) {
-            $this->markTestSkipped('allow_url_fopen is not enabled');
-        }
-
-        if (!ini_get('allow_url_include')) {
-            $this->markTestSkipped('allow_url_include is not enabled');
-        }
-
-        $time = time();
-
-        vfsStream::newFile('cachefile.php')
-            ->at($this->root)
-            ->withContent('<?php return ' . var_export($this->getDummyCachedConfig(), true) . ';')
-            ->lastModified($time);
-
-        $basePath = vfsStream::url('cachetest');
+        $basePath = __DIR__ . '/config';
 
         $cache = new Cache($basePath);
         

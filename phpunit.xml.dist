@@ -10,9 +10,6 @@
                 <directory suffix=".php">tests</directory>
             </exclude>
         </whitelist>
-        <blacklist>
-            <directory>./vendor</directory>
-        </blacklist>
     </filter>
     <testsuites>
         <testsuite name="The Iconic Config Test Suite">
